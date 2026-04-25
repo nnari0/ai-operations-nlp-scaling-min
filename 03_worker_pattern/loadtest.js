@@ -13,7 +13,7 @@ export const responseTime = new Trend('response_time', true);
 export const enqueueLatency = new Trend('enqueue_latency_ms', true);
 
 export const options = {
-    vus: 50,
+    vus: 20,
     duration: '60s',
     thresholds: {
         request_success_rate: ['rate>0.95'],

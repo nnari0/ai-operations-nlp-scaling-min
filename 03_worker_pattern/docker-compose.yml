@@ -10,6 +10,6 @@ services:
       - "8000:8000"
   worker:
     build: . #use the Dockerfile in the current directory
-    command: rq worker --url redis://redis:6379 # service "redis" does work here because of the network created by docker-compose
+    command: python run_worker.py # start simple worker process
     depends_on:
       - redis
