@@ -4,16 +4,15 @@
 docker compose up --build
 ```
 
-Mit skaliserung vom worker
+Mit skaliserung vom api 
 ```bash
-docker compose -f docker-compose.limited.yml up --build --scale worker=3
+docker compose -f docker-compose.limited.yml up --build --scale api=3
 ```
 -> skalierung von api Container funktioniert nicht, weil der hört auf Port 8000 & man kann nicht 3 gleiche Container auf demselben Port hören lassen.
 
 get logs from docker container
 ```bash
 docker compose -f docker-compose.limited.yml logs -f worker
-
 ```
 
 

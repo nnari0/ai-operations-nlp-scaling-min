@@ -1,0 +1,46 @@
+services:
+  traefik:
+    image: traefik:v3.6
+    command:
+      - "--providers.docker=true" # enable Docker provider to allow Traefik to discover services and automatically configure routing based on container labels
+      - "--providers.docker.exposedbydefault=false" # disable automatic exposure of all Docker containers, so that only containers with explicit labels will be routed by Traefik
+      - "--entrypoints.web.address=:80" # define an entry point named "web" that listens on port 80 for incoming HTTP traffic
+      - "--api.insecure=true" # enable the Traefik dashboard without authentication (not recommended for production use)
+      - "--api.dashboard=true" # enable the Traefik dashboard to visualize the routing configuration and monitor traffic
+    ports:
+      - "80:80"
+      - "8080:8080" # expose Traefik dashboard on port 8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # allow Traefik to access Docker API
+      # mount the local docker socket into to the container socket, so that Traefik can listen to Docker events and automatically update its configuration when containers are started or stopped.
+      # e.g. scaling services up and down
+
+  redis:
+    image: redis:alpine
+  api:
+    build: . #use the Dockerfile in the current directory
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 #overwrite command in Dockerfile
+    depends_on:
+      - redis
+    labels:
+      - "traefik.enable=true" # enable Traefik for this service
+      - "traefik.http.routers.nlpapi.rule=PathPrefix(`/`)"  # define a routing rule that matches all paths and routes them to the api service
+      - "traefik.http.routers.nlpapi.entrypoints=web" # specify that the api service should be accessible through the "web" entry point defined in the Traefik configuration
+      - "traefik.http.services.nlpapi.loadbalancer.server.port=8000" # specify the port that Traefik should use to access the api service (defined in the command above to run on port 8000)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # limit api service to use at most 50% of a CPU
+          memory: 512M # limit api service to use at most 512MB of memory
+  worker:
+    build: . #use the Dockerfile in the current directory
+    command: python run_worker.py # start simple worker process
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0' # limit worker service to use at most 1 CPU
+          memory: 2G # limit worker service to use at most 2GB of memory
+    environment:
+      - TORCH_NUM_THREADS=1 # set environment variable to limit number of threads used by torch
+    depends_on:
+      - redis
