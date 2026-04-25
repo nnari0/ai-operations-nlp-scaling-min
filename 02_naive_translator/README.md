@@ -29,13 +29,14 @@ Get-Content .\loadtest.js -Raw | docker run --rm -i `
 **Mac/Linux:**
 ```bash
 docker run --rm -i \
+  --add-host=host.docker.internal:host-gateway \
   -p 5665:5665 \
   -e K6_WEB_DASHBOARD=true \
   -e K6_WEB_DASHBOARD_HOST=0.0.0.0 \
   -e K6_WEB_DASHBOARD_PORT=5665 \
   -v "$PWD:/scripts" \
   -w /scripts \
-  grafana/k6 run - < ./loadtest.js
+  grafana/k6 run loadtest.js
 ```
 
 Dashboard: http://localhost:5665
