@@ -33,6 +33,8 @@ docker run --rm -i \
   -e K6_WEB_DASHBOARD=true \
   -e K6_WEB_DASHBOARD_HOST=0.0.0.0 \
   -e K6_WEB_DASHBOARD_PORT=5665 \
+  -v "$PWD:/scripts" \
+  -w /scripts \
   grafana/k6 run - < ./loadtest.js
 ```
 

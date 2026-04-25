@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
 app = FastAPI()
@@ -9,7 +9,7 @@ model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-base")
 
 
 class RequestData(BaseModel):
-    text: str
+    text: str = Field(..., min_length=1, max_length=1000)
 
 
 @app.post("/predict")
