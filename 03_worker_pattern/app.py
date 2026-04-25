@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from redis import Redis
 from rq import Queue
 
+
 app = FastAPI()
 q = Queue("default", connection=Redis(host="redis", port=6379))
 
@@ -13,11 +14,28 @@ class RequestData(BaseModel):
 
 @app.post("/predict-async")
 async def predict_async(data: RequestData):
-    # TODO: Enqueue the prediction task to the worker queue
-    pass
+    #  Enqueue the prediction task to the worker queue
+    job = q.enqueue("jobs.analyze", data.text)
+    return {"job_id": job.id, "status": "queued"}
 
 
 @app.get("/status/{job_id}")
 async def get_status(job_id: str):
-    # TODO: Check the status of the job in the worker queue and return the result if available
-    pass
+    # Check the status of the job in the worker queue and return the result if available
+    job = q.fetch_job(job_id)
+
+    if job is None:
+        return {"error": "Job not found"}
+    elif job.is_finished:
+        return {"job_id": job.id,
+                "status": "finished",
+                "result": job.result
+                }
+    elif job.is_failed:
+        return {"job_id": job.id,
+                "status": "failed"
+                }
+    else:
+        return {"job_id": job.id,
+                "status": "queued/running"
+                }
