@@ -1,10 +1,11 @@
 info:
   name: nlp-sentiment
   type: http
+  seq: 1
 
 http:
   method: POST
-  url: http://localhost:8000/predict
+  url: http://localhost:8000/predict-async
   body:
     type: json
     data: '{"text": "Das ist ein schlechter Kurs!"}'

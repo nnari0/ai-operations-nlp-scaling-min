@@ -1,0 +1,15 @@
+info:
+  name: get status
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:8000/status/1d9b1dfb-e9aa-4c33-94c9-3349c4970c7a
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
