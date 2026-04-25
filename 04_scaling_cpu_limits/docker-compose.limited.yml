@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: redis:alpine
+  api:
+    build: . #use the Dockerfile in the current directory
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 #overwrite command in Dockerfile
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # limit api service to use at most 50% of a CPU
+          memory: 512M # limit api service to use at most 512MB of memory
+  worker:
+    build: . #use the Dockerfile in the current directory
+    command: python run_worker.py # start simple worker process
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0' # limit worker service to use at most 1 CPU
+          memory: 2G # limit worker service to use at most 2GB of memory
+    environment:
+      - TORCH_NUM_THREADS=1 # set environment variable to limit number of threads used by torch
+    depends_on:
+      - redis

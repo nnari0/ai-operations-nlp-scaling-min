@@ -14,12 +14,12 @@ export const enqueueLatency = new Trend('enqueue_ms', true);
 
 export const options = {
     scenarios: {
-        constant_arrival: {
-            executor: 'constant-arrival-rate',
-            rate: 2,                // Requests pro timeUnit – hier anpassen!
+        constant_arrival: { 
+            executor: 'constant-arrival-rate', // with arrival rate we want to keep the request reaching the backend constant, independent of how long the requests take 
+            rate: 2,                // Requests pro timeUnit – hier anpassen! -> diese wollen wir konstant halten, damit die Anzahl der Anfragen pro Sekunde gleich bleibt, auch wenn die Anfragen länger dauern
             timeUnit: '1s',
             duration: '60s',
-            preAllocatedVUs: 50,
+            preAllocatedVUs: 50, // Vorschlag, wie viele Anzahl user wir für die konstante Ankunftsrate vorab bereitstellen wollen, damit k6 nicht ständig neue User starten muss, wenn die Anfragen länger dauern
             maxVUs: 200,
         },
     },
