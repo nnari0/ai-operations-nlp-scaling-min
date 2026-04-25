@@ -1,0 +1,17 @@
+info:
+  name: nlp-sentiment
+  type: http
+
+http:
+  method: POST
+  url: http://localhost:8000/predict
+  body:
+    type: json
+    data: '{"text": "Das ist ein schlechter Kurs!"}'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

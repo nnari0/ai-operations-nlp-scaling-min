@@ -19,6 +19,7 @@ Oder mit Postman auf `http://localhost:8000/predict`, Body als JSON.
 **Windows PowerShell:**
 ```powershell
 Get-Content .\loadtest.js -Raw | docker run --rm -i `
+  --add-host=host.docker.internal:host-gateway `
   -p 5665:5665 `
   -e K6_WEB_DASHBOARD=true `
   -e K6_WEB_DASHBOARD_HOST=0.0.0.0 `
@@ -29,6 +30,7 @@ Get-Content .\loadtest.js -Raw | docker run --rm -i `
 **Mac/Linux:**
 ```bash
 docker run --rm -i \
+  --add-host=host.docker.internal:host-gateway \
   -p 5665:5665 \
   -e K6_WEB_DASHBOARD=true \
   -e K6_WEB_DASHBOARD_HOST=0.0.0.0 \
