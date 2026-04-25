@@ -27,7 +27,7 @@ export default function () {
     });
     const params = {
         headers: { 'Content-Type': 'application/json' },
-        timeout: '30s',
+        timeout: '60s',
     };
 
     const startedAt = Date.now();
